@@ -29,8 +29,8 @@ class Archive(object):
 		return
 	
 	def archivate(self, message):
-		#paste = message[9:]
 		if len(message) < 10:
+			#а паста-то пустая. На русском не принимает, ругается на non-ascii
 			return u'\u0430\u0020\u043F\u0430\u0441\u0442\u0430\u002D\u0442\u043E\u0020\u043F\u0443\u0441\u0442\u0430\u044F'
 		else:
 			with open('Services\Scripts\paste\lib\pastaList.json', 'rb+') as f:

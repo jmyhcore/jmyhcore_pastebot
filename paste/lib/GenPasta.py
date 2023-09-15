@@ -40,12 +40,3 @@ class GenPasta(object):
 		from random import SystemRandom
 		r = SystemRandom()
 		return unicode(self.data[r.randrange(maxI)])
-		#return unicode(random.choice(self.data['list']))
-
-'''
-q = MySettings(debug=True)
-v=0
-for i in range(1, 100):
-	print(q.generate())
-
-'''
