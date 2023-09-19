@@ -1,5 +1,9 @@
 const config = require('./config')
 const db = require('./sql')
+cooldowns = {
+    pasta: 0,
+    archive: 0
+}
 
 const messageHandler = async(channel, context, message) => {
     return new Promise( async resolve => {
@@ -11,8 +15,8 @@ const messageHandler = async(channel, context, message) => {
     
         let result = null
         let error = null
-        if (config.commandList.pasta.indexOf(command) > -1) result = await pasta()
-        if (config.commandList.archive.indexOf(command) > -1) result = archive(channel, context, message)
+        if (config.pasta.trigger.indexOf(command) > -1) result = await pasta(context.mod)
+        if (config.archive.trigger.indexOf(command) > -1) result = archive(channel, context, message)
         
 
         if (!result) result = null
@@ -26,8 +30,13 @@ const connectionHandler = (addr, port) => {
     console.log(`connected to ${addr}:${port}`)
 }
 
-pasta = async() => {
+pasta = async(isModerator) => {
     return new Promise( async(resolve) => {
+        if ((Date.now - cooldowns.pasta) < config.pasta.cooldown && !isModerator) {
+            resolve(null)
+            return
+        }
+        cooldowns.pasta = Date.now()
         result = await db.getRandomPasta()
         if (result[0]) resolve('error')
         else resolve(result[1].content)

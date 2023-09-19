@@ -18,7 +18,6 @@ const client = new tmi.client(clientOptions)
 
 client.on('message', async(channel, context, message, self) => {
     if (self) return
-
     channel = channel.substring(1)
     let reply = await handlers.messageHandler(channel, context, message)
     
