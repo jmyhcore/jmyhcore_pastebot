@@ -23,7 +23,7 @@ client.on('message', async(channel, context, message, self) => {
     let reply = await handlers.messageHandler(channel, context, message)
     
 
-    if (reply) client.say('xhilatreae', reply)
+    if (reply) client.say(channel, reply)
 })
 client.on('connected', handlers.connectionHandler)
 
