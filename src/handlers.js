@@ -15,6 +15,7 @@ const messageHandler = async(channel, context, message) => {
     
         let result = null
         let error = null
+
         if (config.pasta.trigger.indexOf(command) > -1) result = await pasta(context.mod)
         if (config.archive.trigger.indexOf(command) > -1) result = archive(channel, context, message)
         
@@ -30,7 +31,7 @@ const connectionHandler = (addr, port) => {
     console.log(`connected to ${addr}:${port}`)
 }
 
-pasta = async(isModerator, limit) => {
+pasta = async(isModerator) => {
     return new Promise( async(resolve) => {
         if ((Date.now - cooldowns.pasta) < config.pasta.cooldown && !isModerator) {
             resolve(null)

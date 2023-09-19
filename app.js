@@ -29,12 +29,11 @@ client.on('message', async(channel, context, message, self) => {
     channel = channel.substring(1)
     let reply = await handlers.messageHandler(channel, context, message)
     
-
     if (reply) client.say(channel, reply)
 })
 client.on('connected', handlers.connectionHandler)
 
-//client.connect();
+client.connect();
 
 app.post('/register', webhandlers.register)
 app.post('/login', webhandlers.login)
