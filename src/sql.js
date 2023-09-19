@@ -44,7 +44,17 @@ class DB {
         });
     }
 
-    async archive(channel, author, message, weight = 1000) {
+    async getPastaList() {
+        return new Promise(resolve => {
+            let sql = `select * from paste order by id`;
+            this.db.all(sql, (err, data) => {
+                if (err) resolve([err, null]);
+                else resolve([null, data]);
+            });
+        });
+    }
+
+    async archive(channel, author, message, weight) {
         return new Promise( resolve => {
             let sql = ` insert into paste(channel, author, content, weight) values((?), (?), (?), (?)) `
             this.db.run(sql, [channel, author, message, weight], (err) => {
@@ -70,6 +80,26 @@ class DB {
             this.db.run(sql, [login, hashedPwd], err => {
                 if (err) resolve(err)
                 else resolve({login})
+            })
+        })
+    }
+
+    deletePaste = async(id) => {
+        return new Promise(async(resolve) => {
+            let sql = `delete from paste where id = (?)`
+            this.db.run(sql, id, err => {
+                if (err) resolve([err, false])
+                else resolve([null, true])
+            })
+        })
+    }
+
+    updatePaste = async(id, content) => {
+        return new Promise(async(resolve) => {
+            let sql = `update paste set content = (?) where id = (?)`
+            this.db.run(sql, [content, id], err => {
+                if (err) resolve([err, false])
+                else resolve([null, true])
             })
         })
     }

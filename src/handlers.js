@@ -30,7 +30,7 @@ const connectionHandler = (addr, port) => {
     console.log(`connected to ${addr}:${port}`)
 }
 
-pasta = async(isModerator) => {
+pasta = async(isModerator, limit) => {
     return new Promise( async(resolve) => {
         if ((Date.now - cooldowns.pasta) < config.pasta.cooldown && !isModerator) {
             resolve(null)
@@ -43,10 +43,10 @@ pasta = async(isModerator) => {
     })
 }
 
-archive = async(channel, context, message) => {
+archive = async(channel, context, message, weight = 1000) => {
     return new Promise( async(resolve) => {
         if (context.mod || context.subscriber || context.badges.broadcaster == '1' || context.badges.vip == '1') {
-            result = await db.archive(channel, context.username, message)
+            result = await db.archive(channel, context.username, message, weight)
             if (result[0]) resolve('error')
             else resolve('ПАСТА добавлена')
         } else resolve('ПАСТА не добавлена. ПАСТЫ могут добавить только сабсрэмбо')
@@ -54,5 +54,5 @@ archive = async(channel, context, message) => {
 }
 
 module.exports = {
-    messageHandler, connectionHandler
+    messageHandler, connectionHandler, pasta, archive
 }
