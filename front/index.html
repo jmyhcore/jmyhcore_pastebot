@@ -1,0 +1,44 @@
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+
+<body>
+    <div id="app">
+        <v-app>
+            <v-card>
+                <v-card-text>aboba</v-card-text>
+            </v-card>
+        </v-app>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+</body>
+
+<script>
+    new Vue({
+        el: '#app',
+        vuetify: new Vuetify(),
+        data: () => ({
+        }),
+        methods: {
+        }
+    })
+    Vue.use(Vuetify, {
+        theme: {
+            primary: '#C0D8D8',
+            secondary: '#D8F0F0',
+            accent: '#303030',
+            error: '#F72A38',
+            warning: '#F5E582',
+            info: '#F0F0F0',
+            success: '#789078'
+        }
+    })
+</script>
+
+</html>

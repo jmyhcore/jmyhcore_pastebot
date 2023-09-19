@@ -53,6 +53,26 @@ class DB {
             })
         })
     }
+
+    findUserByLogin = async(login) => {
+        return new Promise(async(resolve) => {
+            let sql = `select * from user where login = (?)`
+            this.db.all(sql, login, (err, data) => {
+                if (err) resolve(null)
+                else resolve(data[0])
+            })
+        })
+    }
+
+    createUser = async(login, hashedPwd) => {
+        return new Promise(async(resolve) => {
+            let sql = `insert into user(login, password) values((?), (?))`
+            this.db.run(sql, [login, hashedPwd], err => {
+                if (err) resolve(err)
+                else resolve({login})
+            })
+        })
+    }
 }
 
 module.exports = new DB()
