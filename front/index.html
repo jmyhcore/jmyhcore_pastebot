@@ -78,8 +78,8 @@
                         <v-card-title>управление</v-card-title>
                         <v-card-text>
                             <v-card v-for="(item, index) in pasteList" :key="index" style="margin-top: 5px">
-                                <v-card-title>{{item.author ? item.author : '[no author]'}}</v-card-title>
-                                <v-card-subtitle>вес: {{item.weight}} </v-card-subtitle>
+                                <v-card-title>Автор: {{item.author ? item.author : '[no author]'}}</v-card-title>
+                                <v-card-subtitle>Вес: {{item.weight}} </v-card-subtitle>
 
                                 <div style="width: 35em">
                                     <v-textarea :auto-grow="true" variant="tonal" v-model="item.content"></v-textarea>
