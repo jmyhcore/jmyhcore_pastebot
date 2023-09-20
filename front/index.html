@@ -63,8 +63,10 @@
                         <v-text-field variant="outlined" label="channel" v-model="currentPasteChannel"></v-text-field>
                         <v-text-field variant="outlined" label="author" v-model="currentPasteAuthor"></v-text-field>
                         <v-text-field variant="outlined" label="weight" v-model="currentPasteWeight"></v-text-field>
-                        <v-textarea rows="5" max-width="35em" :auto-grow="true" variant="outlined" label="pasta itself"
-                            v-model="currentPasteContent"></v-textarea>
+                        <div>
+                            <v-textarea rows="5" :auto-grow="true" variant="outlined" label="pasta itself"
+                                v-model="currentPasteContent"></v-textarea>
+                        </div>
                     </v-card-text>
                     <v-card-actions>
                         <v-btn @click="darkTheme = !darkTheme">invert colors</v-btn>
@@ -91,7 +93,7 @@
                                     <v-btn @click="update(item, index)">обновить</v-btn>
                                 </v-card-actions>
                             </v-card>
-                            
+
                         </v-card-text>
                     </v-card>
                 </div>
@@ -163,13 +165,13 @@
                 }
 
                 let reply = await this.request('/newpaste', body)
-                if (reply.result)  {
+                if (reply.result) {
                     this.pasteList.push({
-                         author: this.currentPasteAuthor,
-                         weight: this.currentPasteWeight, 
-                         content: this.currentPasteContent,
-                         channel: this.currentPasteChannel ? this.currentPasteChannel : null 
-                    })   
+                        author: this.currentPasteAuthor,
+                        weight: this.currentPasteWeight,
+                        content: this.currentPasteContent,
+                        channel: this.currentPasteChannel ? this.currentPasteChannel : null
+                    })
                     this.currentPasteContent = ''
 
                 }
@@ -183,16 +185,16 @@
             },
 
             async deletePaste(item, index) {
-                let result = await this.request('delete', {id: item.id})
+                let result = await this.request('delete', { id: item.id })
                 if (result.result == true) {
-                    this.pasteList = this.pasteList.filter( (arrayItem) => {
+                    this.pasteList = this.pasteList.filter((arrayItem) => {
                         if (item.id != arrayItem.id) return arrayItem
                     })
                 }
             },
 
             async update(item) {
-                let result = await this.request('update', {id: item.id, content: item.content})
+                let result = await this.request('update', { id: item.id, content: item.content })
             }
         },
         watch: {
@@ -212,7 +214,7 @@
 
             this.darkTheme = $cookies.get('theme') == 1 ? true : false
             this.$vuetify.theme = { dark: this.darkTheme }
-            
+
         },
 
         mounted() {
