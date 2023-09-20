@@ -73,19 +73,22 @@
                     </v-card-actions>
                 </v-card>
 
-                <div v-if="token" style="margin-left: auto; margin-right:auto ; width: 80%; margin-top: 25px">
+                <div v-if="token" style="margin-left: auto; margin-right:auto ; margin-top: 25px">
                     <v-card class="mx-auto" variant="outlined">
                         <v-card-title>управление</v-card-title>
                         <v-card-text>
                             <v-card v-for="(item, index) in pasteList" :key="index" style="margin-top: 5px">
                                 <v-card-title>{{item.author ? item.author : '[no author]'}}</v-card-title>
                                 <v-card-subtitle>вес: {{item.weight}} </v-card-subtitle>
-                                <v-textarea :auto-grow="true" variant="tonal" v-model="item.content"></v-textarea>
+
+                                <div style="width: 35em">
+                                    <v-textarea :auto-grow="true" variant="tonal" v-model="item.content"></v-textarea>
+                                </div>
 
                                 <v-card-actions>
                                     <v-btn color="error" @click="deletePaste(item, index)">удолить</v-btn>
                                     <v-spacer></v-spacer>
-                                    <v-btn color="primary" @click="update(item, index)">обновить</v-btn>
+                                    <v-btn @click="update(item, index)">обновить</v-btn>
                                 </v-card-actions>
                             </v-card>
                             
@@ -121,7 +124,6 @@
             },
             async request(uri, body = {}) {
                 this.loading = true
-                console.log(this.token)
                 let config = {
                     headers: {
                         'x-access-token': this.token
@@ -153,9 +155,6 @@
             },
 
             async submitPaste() {
-
-                console.log(await this.loadPasteList())
-                return
                 let body = {
                     channel: this.currentPasteChannel,
                     author: this.currentPasteAuthor,
@@ -164,7 +163,16 @@
                 }
 
                 let reply = await this.request('/newpaste', body)
-                if (reply.result) this.currentPasteContent = ''
+                if (reply.result)  {
+                    this.pasteList.push({
+                         author: this.currentPasteAuthor,
+                         weight: this.currentPasteWeight, 
+                         content: this.currentPasteContent,
+                         channel: this.currentPasteChannel ? this.currentPasteChannel : null 
+                    })   
+                    this.currentPasteContent = ''
+
+                }
             },
 
             async loadPasteList() {
@@ -189,7 +197,6 @@
         },
         watch: {
             darkTheme(newValue, oldValue) {
-                console.log(newValue)
                 if (newValue == oldValue) return
                 this.$vuetify.theme = { dark: newValue }
                 $cookies.set('theme', newValue ? 1 : 0)
