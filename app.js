@@ -33,7 +33,7 @@ client.on('message', async(channel, context, message, self) => {
 })
 client.on('connected', handlers.connectionHandler)
 
-//client.connect();
+client.connect();
 
 app.post('/register', webhandlers.register)
 app.post('/login', webhandlers.login)
