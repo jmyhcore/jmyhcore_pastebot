@@ -63,7 +63,7 @@
                         <v-text-field variant="outlined" label="channel" v-model="currentPasteChannel"></v-text-field>
                         <v-text-field variant="outlined" label="author" v-model="currentPasteAuthor"></v-text-field>
                         <v-text-field variant="outlined" label="weight" v-model="currentPasteWeight"></v-text-field>
-                        <v-textarea rows="5" :auto-grow="true" variant="outlined" label="pasta itself"
+                        <v-textarea rows="5" max-width="35em" :auto-grow="true" variant="outlined" label="pasta itself"
                             v-model="currentPasteContent"></v-textarea>
                     </v-card-text>
                     <v-card-actions>
