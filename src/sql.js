@@ -21,10 +21,24 @@ class DB {
         });
     }
 
-    async getRandomPasta() {
+    async getRandomPasta(excludeList = null) {
         return new Promise(resolve => {
-            let sql = `select * from paste order by RANDOM() limit 1`;
+            let sql = `select * from paste`;
+
+            
+            if (excludeList) {
+                let excludeListString = ''
+                excludeList.forEach(item => {
+                    excludeListString +=`${item}, `
+                })
+                excludeListString = excludeListString.slice(0, -2); 
+                sql += ' '
+                sql += `where id not in (${excludeListString})`
+            }
+
+            sql +=  ` order by RANDOM() limit 1`
             this.db.all(sql, (err, data) => {
+                console.log(data[0])
                 if (err) resolve([err, null]);
                 else resolve([null, data[0]]);
             });
