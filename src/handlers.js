@@ -50,7 +50,7 @@ archive = async(channel, context, message, weight = 1000) => {
             result = await db.archive(channel, context.username, message, weight)
             if (result[0]) resolve('error')
             else resolve('ПАСТА добавлена')
-        } else resolve('ПАСТА не добавлена. ПАСТЫ могут добавить только сабсрэмбо')
+        } else resolve('ПАСТА не добавлена. ПАСТЫ могут добавить только сабскрэмбо')
     })
 }
 
