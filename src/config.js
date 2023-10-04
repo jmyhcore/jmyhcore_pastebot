@@ -1,6 +1,6 @@
 config = {
     pasta : {
-        trigger: ['!паста', '!pasta'],
+        trigger: ['!паста', '!pasta', '!капча'],
         cooldown: 30000
     },
     archive: {
