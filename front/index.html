@@ -153,9 +153,7 @@
                 $cookies.set('login', authdata.login)
                 $cookies.set('token', authdata.token)
                 this.token = authdata.token
-                setTimeout( () => {
-                    this.loadPastelist()
-                }, 200)
+                this.loadPasteList()
             },
 
             async submitPaste() {
