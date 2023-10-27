@@ -38,11 +38,20 @@ class DB {
 
             sql +=  ` order by RANDOM() limit 1`
             this.db.all(sql, (err, data) => {
-                console.log(data[0])
                 if (err) resolve([err, null]);
                 else resolve([null, data[0]]);
             });
         });
+    }
+
+    async getPastaById(id) {
+        return new Promise(resolve => {
+            let sql = `select * from paste where id = ?`
+            this.db.all(sql, id, (err, data) => {
+                if (err) resolve([err, null])
+                else resolve([null, data[0]])
+            })
+        })
     }
 
     async getWeightedPasta() {
