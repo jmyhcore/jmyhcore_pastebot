@@ -90,7 +90,9 @@
                                 <v-card-actions>
                                     <v-btn color="error" @click="deletePaste(item, index)">удолить</v-btn>
                                     <v-spacer></v-spacer>
-                                    <v-btn @click="update(item, index)">обновить</v-btn>
+                                    <v-btn @click="send(item, index)"
+                                        color="green">Давануть</v-btn>
+                                    <v-btn @click="update(item, index)" color="primary">обновить</v-btn>
                                 </v-card-actions>
                             </v-card>
 
@@ -98,6 +100,29 @@
                     </v-card>
                 </div>
             </div>
+
+            <template>
+                <div class="text-center">
+                    <v-dialog v-model="sendPasteConfirmationDialog" width="50%">
+                        <v-card>
+                            <v-card-title>Подтверди выдавливание пасты №{{selectedPasteIndex}}</v-card-title>
+                            <v-card-subtitle>
+                                Автор: {{selectedPasteItem.author}}, вес: {{selectedPasteItem.weight}}
+                            </v-card-subtitle>
+                            <v-card-text>
+                                <div style="width: 35em">
+                                    <v-textarea :auto-grow="true" variant="tonal" v-model="selectedPasteItem.content"></v-textarea>
+                                </div>
+                            </v-card-text>
+                            <v-card-actions>
+                                <v-btn color="error" @click="sendPasteConfirmationDialog = false">закрыть</v-btn>
+                                <v-spacer></v-spacer>
+                                <v-btn color="green" @click="confirmSend">Реально давануть</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                </div>
+            </template>
         </v-app>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
@@ -118,9 +143,26 @@
             currentPasteContent: '',
             darkTheme: true,
             pasteList: [{ author: 'template', weight: 0, content: 'template' }],
-            pasteListCard: 0
+            pasteListCard: 0,
+            sendPasteConfirmationDialog: false,
+            selectedPasteIndex: 0,
+            selectedPasteItem: {}
         }),
         methods: {
+            send(item, index) {
+                this.selectedPasteIndex = index
+                this.selectedPasteItem = item
+                this.sendPasteConfirmationDialog = true
+            },
+            async confirmSend() {
+                let result = await this.request('/sendpaste', {id: this.selectedPasteItem.id})
+                console.log(result)
+                if (!result.error) {
+                    this.selectedPasteIndex = 0
+                    this.selectedPasteItem = {}
+                    this.sendPasteConfirmationDialog = false
+                }
+            },
             required(v) {
                 return !!v || 'Field is required'
             },

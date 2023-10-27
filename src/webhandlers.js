@@ -23,7 +23,7 @@ const register = async (req, res) => {
             });
         }
 
-        encryptedPwd = await bcrypt.hash(pwd, 10);
+        let encryptedPwd = await bcrypt.hash(pwd, 10);
         const user = await db.createUser(login, encryptedPwd);
         const token = jwt.sign({ user_id: login }, tokenBase, { expiresIn: "7d" });
 
@@ -121,6 +121,16 @@ const updatePaste = async(req, res) => {
     else res.status(200).json({error: null, result: true})
 }
 
+const sendpaste = async (req, res, client) => {
+    let {id} = req.body
+    if (!id) return res.status(200).json({error: 'wrong id', result: null})
+
+    let [error, result] = await db.getPastaById(id)
+
+    client.say('cptlenivka', result.content)
+    res.status(200).json({error: null, result})
+}
+
 module.exports = {
     register,
     login,
@@ -128,5 +138,6 @@ module.exports = {
     newPaste,
     pasteList,
     updatePaste,
-    deletePaste
+    deletePaste,
+    sendpaste
 };

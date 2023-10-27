@@ -44,6 +44,7 @@ app.post('/newpaste', webhandlers.verifyToken, webhandlers.newPaste)
 app.post('/pastelist', webhandlers.verifyToken, webhandlers.pasteList)
 app.post('/delete', webhandlers.verifyToken, webhandlers.deletePaste)
 app.post('/update', webhandlers.verifyToken, webhandlers.updatePaste)
+app.post('/sendpaste', webhandlers.verifyToken, (req, res) => webhandlers.sendpaste(req, res, client))
 app.get('/', (req, res) => res.sendFile(__dirname+'/front/index.html'))
 
 app.listen(80)
