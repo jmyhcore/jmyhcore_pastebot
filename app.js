@@ -5,6 +5,7 @@ const fs = require('fs')
 const rawLoginData = fs.readFileSync('./cridentials.json')
 const parsedLoginData = JSON.parse(rawLoginData)
 
+
 const express = require('express')
 const app = express()
 const bodyparser = require('body-parser')
