@@ -1,6 +1,8 @@
 const tmi = require('tmi.js')
 const handlers = require('./src/handlers')
 const webhandlers = require('./src/webhandlers')
+const Timer = require('./src/timers')
+
 const fs = require('fs')
 const rawLoginData = fs.readFileSync('./cridentials.json')
 const parsedLoginData = JSON.parse(rawLoginData)
@@ -18,11 +20,13 @@ const clientOptions = {
         password: parsedLoginData.token
     },
     channels: [
-        'cptlenivka', 'xhilatreae'
+        'cptlenivka', 'xhilatreae', 'xelagray' 
     ]
 }
 
 const client = new tmi.client(clientOptions)
+const timer = new Timer(client)
+timer.init()
 
 client.on('message', async(channel, context, message, self) => {
     if (self) return

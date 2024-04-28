@@ -17,8 +17,10 @@ const messageHandler = async (channel, context, message) => {
         let result = null
         let error = null
 
-        if (config.pasta.trigger.indexOf(command) > -1) result = await pasta(context.mod)
-        if (config.archive.trigger.indexOf(command) > -1) result = archive(channel, context, message)
+        if (channel != 'xelagray') {
+            if (config.pasta.trigger.indexOf(command) > -1) result = await pasta(context.mod)
+            if (config.archive.trigger.indexOf(command) > -1) result = archive(channel, context, message)
+        }
 
 
         if (!result) result = null
@@ -60,6 +62,8 @@ archive = async (channel, context, message, weight = 1000) => {
         } else resolve('ПАСТА не добавлена. ПАСТЫ могут добавить только сабскрэмбо')
     })
 }
+
+
 
 module.exports = {
     messageHandler, connectionHandler, pasta, archive

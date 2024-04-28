@@ -126,6 +126,56 @@ class DB {
             })
         })
     }
+
+    getTimerList = async() => {
+        return new Promise( async(resolve) => {
+            let sql = `select id, channel, pasta from timers`
+            this.db.all(sql, (err, data) => {
+                if (err) resolve(null)
+                else resolve(data)
+            })
+        })
+    }
+
+    getTimerByChannel = async(channel) => {
+        return new Promise( async(resolve) => {
+            let sql = `select * from timers where channel = (?)`
+            this.db.all(sql, channel, (err, data) => {
+                if (err) resolve(null)
+                else resolve(data)
+            })
+        })
+    }
+
+    addTimerByChannel = async(channel, pasta) =>  {
+        return new Promise(async(resolve) => {
+            let sql = `insert into timers(channel, pasta) values((?), (?))`
+            this.db.run(sql, [channel, pasta], err => {
+                if (err) resolve([err, false])
+                else resolve([null, true])
+            })
+        })
+    }
+
+    removeTimerById = async(id) => {
+        return new Promise(async(resolve) => {
+            let sql = `delete from timers where id = (?)`
+            this.db.run(sql, id, err => {
+                if (err) resolve([err, false])
+                else resolve([null, true])
+            })
+        })
+    }
+
+    getAllTimerUsers = async() => {
+        return new Promise( async(resolve) => {
+            let sql = `select * from user where pasteinterval > 0`
+            this.db.all(sql, (err, data) => {
+                if (err) resolve(null)
+                else resolve(data)
+            })
+        })
+    }
 }
 
 module.exports = new DB()
