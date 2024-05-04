@@ -131,6 +131,44 @@ const sendpaste = async (req, res, client) => {
     res.status(200).json({error: null, result})
 }
 
+
+const timerAdd = async(req, res) => {
+    const {channel, pasta} = req.body
+    result = await db.addTimerByChannel(channel, pasta)
+    if (result[0]) res.status(200).json({result: null, error: result[1]})
+    else res.status(200).json({error: null, result: result[1]})
+}
+
+const timerList = async(req, res) => {
+    if (!req.body.channel) {
+        res.status(200).json({result: null, error: 'no channel provided'})
+        return
+    }
+    result = await db.getTimerByChannel(req.body.channel)
+    if (result) res.status(200).json({result, error: null})
+    else res.status(200).json({error: 'null', result: null})
+}
+
+const timerDelete = async(req, res) => {
+    if (!req.body.id) {
+        return res.status(200).json({error: 'invalid id', result: null})
+    }
+    result = await db.removeTimerById(req.body.id)
+    if (result[0]) res.status(200).json({result: null, error: result[1]})
+    else res.status(200).json({error: null, result: true})
+}
+
+const timerUpdate = async(req, res) => {
+    if (!req.body.pasta && !req.body.id) {
+        return res.status(200).json({error: 'invalid content', result: null})
+    }
+    result = await db.updateTimerById(req.body.id, req.body.pasta)
+    if (result[0]) res.status(200).json({result: null, error: result[1]})
+    else res.status(200).json({error: null, result: true})
+}
+
+
+
 module.exports = {
     register,
     login,
@@ -139,5 +177,9 @@ module.exports = {
     pasteList,
     updatePaste,
     deletePaste,
-    sendpaste
+    sendpaste,
+    timerAdd,
+    timerUpdate,
+    timerDelete,
+    timerList
 };

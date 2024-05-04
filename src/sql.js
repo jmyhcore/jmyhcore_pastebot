@@ -167,6 +167,17 @@ class DB {
         })
     }
 
+    updateTimerById = async(id, newtext) => {
+        console.log(id, newtext)
+        return new Promise(async(resolve) => {
+            let sql = `update timers set pasta = (?) where id = (?)`
+            this.db.run(sql, [newtext, id], err => {
+                if (err) resolve([err, false])
+                else resolve([null, true])
+            })
+        })
+    }
+
     getAllTimerUsers = async() => {
         return new Promise( async(resolve) => {
             let sql = `select * from user where pasteinterval > 0`

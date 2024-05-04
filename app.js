@@ -51,4 +51,10 @@ app.post('/update', webhandlers.verifyToken, webhandlers.updatePaste)
 app.post('/sendpaste', webhandlers.verifyToken, (req, res) => webhandlers.sendpaste(req, res, client))
 app.get('/', (req, res) => res.sendFile(__dirname+'/front/index.html'))
 
+
+app.get('/timer', (req, res) => res.sendFile(__dirname+'/front/timer.html'))
+app.post('/timerAdd', webhandlers.verifyToken, webhandlers.timerAdd)
+app.post('/timerUpdate', webhandlers.verifyToken, webhandlers.timerUpdate)
+app.post('/timerDelete', webhandlers.verifyToken, webhandlers.timerDelete)
+app.post('/timerList', webhandlers.verifyToken, webhandlers.timerList)
 app.listen(80)
