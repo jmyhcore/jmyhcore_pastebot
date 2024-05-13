@@ -155,7 +155,8 @@
                 $cookies.set('login', authdata.login)
                 $cookies.set('token', authdata.token)
                 this.token = authdata.token
-                this.loadPasteList()
+                this.getTimerList()
+                this.getPasteInterval()
             },
             async updateTimer() {
                 

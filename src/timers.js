@@ -30,8 +30,8 @@ class Timer {
             for(let channel in this.channelPastes) {
 
                 this.channelPastes[channel].interval = setInterval( () => {
-                    //this.client.say(channel, this.channelPastes[channel].pasteList[this.channelPastes[channel].iterator])
-                    console.log(channel, ' | ', this.channelPastes[channel].pasteList[this.channelPastes[channel].iterator])
+                    this.client.say(channel, this.channelPastes[channel].pasteList[this.channelPastes[channel].iterator])
+                    //console.log(channel, ' | ', this.channelPastes[channel].pasteList[this.channelPastes[channel].iterator])
                     this.channelPastes[channel].iterator++
                     if (this.channelPastes[channel].iterator >= (this.channelPastes[channel].pasteList.length))
                         this.channelPastes[channel].iterator = 0
