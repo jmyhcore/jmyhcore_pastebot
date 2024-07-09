@@ -25,7 +25,7 @@ const clientOptions = {
 }
 
 const client = new tmi.client(clientOptions)
-const timer = new Timer(client)
+let timer = new Timer(client)
 timer.init()
 
 client.on('message', async(channel, context, message, self) => {
@@ -57,4 +57,11 @@ app.post('/timerAdd', webhandlers.verifyToken, webhandlers.timerAdd)
 app.post('/timerUpdate', webhandlers.verifyToken, webhandlers.timerUpdate)
 app.post('/timerDelete', webhandlers.verifyToken, webhandlers.timerDelete)
 app.post('/timerList', webhandlers.verifyToken, webhandlers.timerList)
+app.post('/timerGetPeriod', webhandlers.verifyToken, webhandlers.timerGetPeriod)
+
+app.get('/mdi', (req, res) => res.sendFile(__dirname+'/front/mdi.html'))
+
+app.post('/timerUpdate', webhandlers.verifyToken, (req, res) => {
+
+})
 app.listen(80)

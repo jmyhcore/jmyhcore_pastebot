@@ -187,6 +187,16 @@ class DB {
             })
         })
     }
+
+    getPeriodForUser = async(login) => {
+        return new Promise( async(resolve) => {
+            let sql = `select pasteinterval from user where login = (?)`
+            this.db.all(sql, login, (err, data) => {
+                if (err) resolve(null)
+                else resolve(data[0])
+            })
+        })
+    }
 }
 
 module.exports = new DB()

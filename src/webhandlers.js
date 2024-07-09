@@ -167,6 +167,16 @@ const timerUpdate = async(req, res) => {
     else res.status(200).json({error: null, result: true})
 }
 
+const timerGetPeriod = async(req, res) => {
+    const login = req.user.user_id
+    if (!login) {
+        return res.status(200).json({error: 'invalid content', result: null})
+    }
+
+    result = await db.getPeriodForUser(login)
+    res.status(200).json({error: null, result: result})
+}
+
 
 
 module.exports = {
@@ -181,5 +191,6 @@ module.exports = {
     timerAdd,
     timerUpdate,
     timerDelete,
-    timerList
+    timerList,
+    timerGetPeriod
 };

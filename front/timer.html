@@ -103,7 +103,7 @@
             token: '',
             loading: false,
             darkTheme: true,
-            timerValue: 0,
+            timerValue: 15,
             pasteList: [
                 {
                     id: 1,
@@ -158,6 +158,10 @@
                 this.getTimerList()
                 this.getPasteInterval()
             },
+            async loadTimer() {
+                let result = await this.request('/timerGetPeriod')
+                this.timerValue = result.result.pasteinterval / 1000
+            },
             async updateTimer() {
                 
             },
@@ -179,9 +183,6 @@
                 if (!result.error) {
                     this.pasteList = result.result
                 }
-            },
-            async getPasteInterval() {
-                //let result = await this.request('/timerGetUpdateInterval', {channel: this.login})
             },
             newPastaBlock() {
                 this.pasteList.push({
@@ -215,7 +216,7 @@
 
         mounted() {
             this.getTimerList()
-            this.getPasteInterval()
+            this.loadTimer()
         }
     })
     Vue.use(Vuetify, {
