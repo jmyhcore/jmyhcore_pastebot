@@ -20,7 +20,7 @@ const clientOptions = {
         password: parsedLoginData.token
     },
     channels: [
-        'cptlenivka', 'xhilatreae', 'xelagray' 
+        'cptlenivka', 'jmyhcore', 'xelagray' 
     ]
 }
 
