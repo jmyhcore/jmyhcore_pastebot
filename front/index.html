@@ -8,7 +8,7 @@
         integrity="sha512-aoTNnqZcT8B4AmeCFmiSnDlc4Nj/KPaZyB5G7JnOnUEkdNpCZs1LCankiYi01sLTyWy+m2P+W4XM+BuQ3Q4/Dg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
-    <script src="https://unpkg.com/vue-cookies@1.5.12/vue-cookies.js"></script>
+    <!-- <script src="https://unpkg.com/vue-cookies@1.5.12/vue-cookies.js"></script> -->
 
 
     <style>
@@ -42,7 +42,8 @@
                                 label="Login"></v-text-field>
 
                             <v-text-field v-model="password" :readonly="loading" :rules="[required]" clearable
-                                type="password" label="Password" placeholder="Enter your password"></v-text-field>
+                                type="password" label="Password" placeholder="Enter your password"
+                                @keyup.enter="auth"></v-text-field>
 
                             <br>
 
@@ -53,12 +54,18 @@
                         </v-card>
                     </v-sheet>
                 </div>
+
             </div>
 
 
             <div v-if="token" style="margin-left: auto; margin-right:auto ; width: 50%; margin-top: 25px">
                 <v-card class="mx-auto" variant="outlined">
-                    <v-card-title>Добавить ПАСТУ</v-card-title>
+                    <v-card-title>
+                        Добавить ПАСТУ
+                        <v-spacer></v-spacer>
+                        <v-btn @click="darkTheme = !darkTheme">цвет</v-btn>
+                        <v-btn class="ml-3" color="error" @click="logout">logout</v-btn>
+                    </v-card-title>
                     <v-card-text>
                         <v-text-field variant="outlined" label="channel" v-model="currentPasteChannel"></v-text-field>
                         <v-text-field variant="outlined" label="author" v-model="currentPasteAuthor"></v-text-field>
@@ -69,35 +76,29 @@
                         </div>
                     </v-card-text>
                     <v-card-actions>
-                        <v-btn @click="darkTheme = !darkTheme">invert colors</v-btn>
+
                         <v-spacer></v-spacer>
                         <v-btn @click="submitPaste">давануть</v-btn>
                     </v-card-actions>
                 </v-card>
 
-                <div v-if="token" style="margin-left: auto; margin-right:auto ; margin-top: 25px">
-                    <v-card class="mx-auto" variant="outlined">
-                        <v-card-title>управление</v-card-title>
-                        <v-card-text>
-                            <v-card v-for="(item, index) in pasteList" :key="index" style="margin-top: 5px">
-                                <v-card-title>Автор: {{item.author ? item.author : '[no author]'}}</v-card-title>
-                                <v-card-subtitle>Вес: {{item.weight}} </v-card-subtitle>
+                <div v-if="token" class="mx-auto pt-25">
+                        <v-card v-for="(item, index) in pasteList" :key="index" class="pt-5 mt-5">
+                            <v-card-title>Автор: {{item.author ? item.author : '[no author]'}}</v-card-title>
+                            <v-card-subtitle>Вес: {{item.weight}} </v-card-subtitle>
 
-                                <div style="width: 35em">
-                                    <v-textarea :auto-grow="true" variant="tonal" v-model="item.content"></v-textarea>
-                                </div>
+                            <div style="width: 35em">
+                                <v-textarea class="pl-5" :auto-grow="true" variant="tonal"
+                                    v-model="item.content"></v-textarea>
+                            </div>
 
-                                <v-card-actions>
-                                    <v-btn color="error" @click="deletePaste(item, index)">удолить</v-btn>
-                                    <v-spacer></v-spacer>
-                                    <v-btn @click="send(item, index)"
-                                        color="green">Давануть</v-btn>
-                                    <v-btn @click="update(item, index)" color="primary">обновить</v-btn>
-                                </v-card-actions>
-                            </v-card>
-
-                        </v-card-text>
-                    </v-card>
+                            <v-card-actions>
+                                <v-btn color="error" @click="deletePaste(item, index)">удолить</v-btn>
+                                <v-spacer></v-spacer>
+                                <v-btn @click="send(item, index)" color="green">Давануть</v-btn>
+                                <v-btn @click="update(item, index)" color="primary">обновить</v-btn>
+                            </v-card-actions>
+                        </v-card>
                 </div>
             </div>
 
@@ -111,7 +112,8 @@
                             </v-card-subtitle>
                             <v-card-text>
                                 <div style="width: 35em">
-                                    <v-textarea :auto-grow="true" variant="tonal" v-model="selectedPasteItem.content"></v-textarea>
+                                    <v-textarea :auto-grow="true" variant="tonal"
+                                        v-model="selectedPasteItem.content"></v-textarea>
                                 </div>
                             </v-card-text>
                             <v-card-actions>
@@ -155,7 +157,7 @@
                 this.sendPasteConfirmationDialog = true
             },
             async confirmSend() {
-                let result = await this.request('/sendpaste', {id: this.selectedPasteItem.id})
+                let result = await this.request('/sendpaste', { id: this.selectedPasteItem.id })
                 console.log(result)
                 if (!result.error) {
                     this.selectedPasteIndex = 0
@@ -192,10 +194,19 @@
                 })
                 this.password = ''
 
-                $cookies.set('login', authdata.login)
-                $cookies.set('token', authdata.token)
+                localStorage.setItem('login', authdata.login)
+                localStorage.setItem('token', authdata.token)
                 this.token = authdata.token
                 this.loadPasteList()
+            },
+
+            logout() {
+                localStorage.removeItem('login')
+                localStorage.removeItem('token')
+                localStorage.removeItem('theme')
+                this.login = ''
+                this.token = ''
+                this.darkTheme = false
             },
 
             async submitPaste() {
@@ -243,19 +254,19 @@
             darkTheme(newValue, oldValue) {
                 if (newValue == oldValue) return
                 this.$vuetify.theme = { dark: newValue }
-                $cookies.set('theme', newValue ? 1 : 0)
+                localStorage.setItem('theme', newValue ? 1 : 0)
             }
         },
         beforeMount() {
-            let token = $cookies.get('token')
-            let login = $cookies.get('login')
+            let token = localStorage.getItem('token')
+            let login = localStorage.getItem('login')
             if (token && login) {
                 this.token = token
                 this.login = login
                 this.currentPasteAuthor = login
             }
 
-            this.darkTheme = $cookies.get('theme') == 1 ? true : false
+            this.darkTheme = localStorage.getItem('theme') == 1 ? true : false
             this.$vuetify.theme = { dark: this.darkTheme }
 
         },
