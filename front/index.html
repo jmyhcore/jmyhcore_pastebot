@@ -8,7 +8,6 @@
         integrity="sha512-aoTNnqZcT8B4AmeCFmiSnDlc4Nj/KPaZyB5G7JnOnUEkdNpCZs1LCankiYi01sLTyWy+m2P+W4XM+BuQ3Q4/Dg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
-    <!-- <script src="https://unpkg.com/vue-cookies@1.5.12/vue-cookies.js"></script> -->
 
 
     <style>
@@ -38,8 +37,8 @@
                 <div class="login-container" v-if="!token">
                     <v-sheet class="bg-deep-purple pa-12" rounded>
                         <v-card class="mx-auto px-6 py-8" max-width="344">
-                            <v-text-field v-model="login" :readonly="loading" :rules="[required]" class="mb-2" clearable
-                                label="Login"></v-text-field>
+                            <v-text-field v-model="username" :readonly="loading" :rules="[required]" class="mb-2" clearable
+                                label="Username"></v-text-field>
 
                             <v-text-field v-model="password" :readonly="loading" :rules="[required]" clearable
                                 type="password" label="Password" placeholder="Enter your password"
@@ -47,7 +46,7 @@
 
                             <br>
 
-                            <v-btn :disabled="login && !password" :loading="loading" block color="success" size="large"
+                            <v-btn :disabled="username && !password" :loading="loading" block color="success" size="large"
                                 type="submit" variant="elevated" @click="auth">
                                 Sign In
                             </v-btn>
@@ -135,12 +134,12 @@
         el: '#app',
         vuetify: new Vuetify(),
         data: () => ({
-            login: '',
+            username: '',
             password: '',
             token: '',
             loading: false,
-            currentPasteChannel: 'cptlenivka',
-            currentPasteAuthor: 'cptlenivka',
+            currentPasteChannel: '',
+            currentPasteAuthor: '',
             currentPasteWeight: '1000',
             currentPasteContent: '',
             darkTheme: true,
@@ -157,8 +156,7 @@
                 this.sendPasteConfirmationDialog = true
             },
             async confirmSend() {
-                let result = await this.request('/sendpaste', { id: this.selectedPasteItem.id })
-                console.log(result)
+                let result = await this.request('/paste/send', { id: this.selectedPasteItem.id })
                 if (!result.error) {
                     this.selectedPasteIndex = 0
                     this.selectedPasteItem = {}
@@ -188,23 +186,23 @@
                 })
             },
             async auth() {
-                let authdata = await this.request('/login', {
-                    login: this.login,
-                    pwd: this.password
+                let authdata = await this.request('/authorize', {
+                    username: this.username,
+                    password: this.password
                 })
                 this.password = ''
 
-                localStorage.setItem('login', authdata.login)
+                localStorage.setItem('username', authdata.username)
                 localStorage.setItem('token', authdata.token)
                 this.token = authdata.token
                 this.loadPasteList()
             },
 
             logout() {
-                localStorage.removeItem('login')
+                localStorage.removeItem('username')
                 localStorage.removeItem('token')
                 localStorage.removeItem('theme')
-                this.login = ''
+                this.username = ''
                 this.token = ''
                 this.darkTheme = false
             },
@@ -217,7 +215,7 @@
                     content: this.currentPasteContent
                 }
 
-                let reply = await this.request('/newpaste', body)
+                let reply = await this.request('/paste/new', body)
                 if (reply.result) {
                     this.pasteList.push({
                         author: this.currentPasteAuthor,
@@ -231,14 +229,14 @@
             },
 
             async loadPasteList() {
-                let reply = await this.request('/pastelist')
+                let reply = await this.request('/paste/list')
                 this.pasteList = reply.result
                 return reply
 
             },
 
             async deletePaste(item, index) {
-                let result = await this.request('delete', { id: item.id })
+                let result = await this.request('paste/delete', { id: item.id })
                 if (result.result == true) {
                     this.pasteList = this.pasteList.filter((arrayItem) => {
                         if (item.id != arrayItem.id) return arrayItem
@@ -247,7 +245,7 @@
             },
 
             async update(item) {
-                let result = await this.request('update', { id: item.id, content: item.content })
+                let result = await this.request('/paste/update', { id: item.id, content: item.content })
             }
         },
         watch: {
@@ -259,11 +257,12 @@
         },
         beforeMount() {
             let token = localStorage.getItem('token')
-            let login = localStorage.getItem('login')
-            if (token && login) {
+            let username = localStorage.getItem('username')
+            if (token && username && username != 'undefined') {
+                
                 this.token = token
-                this.login = login
-                this.currentPasteAuthor = login
+                this.username = username
+                this.currentPasteAuthor = username
             }
 
             this.darkTheme = localStorage.getItem('theme') == 1 ? true : false
@@ -273,6 +272,9 @@
 
         mounted() {
             this.loadPasteList()
+            this.request('/paste/channellist').then(resp => {
+                this.currentPasteChannel = resp[0] ?? ''
+            })
         }
     })
     Vue.use(Vuetify, {

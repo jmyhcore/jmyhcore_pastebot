@@ -1,5 +1,4 @@
-const fs = require("fs");
-const tokenBase = JSON.parse(fs.readFileSync("cridentials.json")).authtokenbase;
+config = require('./config')
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("./sql");
@@ -7,15 +6,15 @@ const handlers = require('./handlers')
 
 const register = async (req, res) => {
     try {
-        const { login, pwd } = req.body;
-        if (!(login && pwd)) {
+        const { username, password } = req.body;
+        if (!(username && password)) {
             return res.status(200).send({
                 result: null,
                 error: "all input is required",
             });
         }
 
-        const oldUser = await db.findUserByLogin(login);
+        const oldUser = await db.findUserByUsername(username);
         if (oldUser) {
             return res.status(200).send({
                 result: null,
@@ -24,8 +23,8 @@ const register = async (req, res) => {
         }
 
         let encryptedPwd = await bcrypt.hash(pwd, 10);
-        const user = await db.createUser(login, encryptedPwd);
-        const token = jwt.sign({ user_id: login }, tokenBase, { expiresIn: "7d" });
+        const user = await db.createUser(username, encryptedPwd);
+        const token = jwt.sign({ user_id: username }, config.token, { expiresIn: "7d" });
 
         user.token = token;
         delete user.password;
@@ -36,21 +35,21 @@ const register = async (req, res) => {
     }
 };
 
-const login = async (req, res) => {
+const authByPassword = async (req, res) => {
     try {
-        const { login, pwd } = req.body;
+        const { username, password } = req.body;
 
-        if (!(login && pwd)) {
+        if (!(username && password)) {
             res.status(200).send({
                 result: null,
                 error: "all input is required",
             });
             return;
         }
-        const user = await db.findUserByLogin(login);
+        const user = await db.findUserByUsername(username);
 
-        if (user && (await bcrypt.compare(pwd, user.password))) {
-            const token = jwt.sign({ user_id: login }, tokenBase, {
+        if (user && (await bcrypt.compare(password, user.password))) {
+            const token = jwt.sign({ user_id: username }, config.token, {
                 expiresIn: "7d",
             });
 
@@ -75,7 +74,7 @@ const verifyToken = (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, tokenBase);
+        const decoded = jwt.verify(token, config.token);
         req.user = decoded;
     } catch (e) {
         return res.status(200).json({ result: null, error: "authorization required" });
@@ -131,66 +130,13 @@ const sendpaste = async (req, res, client) => {
     res.status(200).json({error: null, result})
 }
 
-
-const timerAdd = async(req, res) => {
-    const {channel, pasta} = req.body
-    result = await db.addTimerByChannel(channel, pasta)
-    if (result[0]) res.status(200).json({result: null, error: result[1]})
-    else res.status(200).json({error: null, result: result[1]})
-}
-
-const timerList = async(req, res) => {
-    if (!req.body.channel) {
-        res.status(200).json({result: null, error: 'no channel provided'})
-        return
-    }
-    result = await db.getTimerByChannel(req.body.channel)
-    if (result) res.status(200).json({result, error: null})
-    else res.status(200).json({error: 'null', result: null})
-}
-
-const timerDelete = async(req, res) => {
-    if (!req.body.id) {
-        return res.status(200).json({error: 'invalid id', result: null})
-    }
-    result = await db.removeTimerById(req.body.id)
-    if (result[0]) res.status(200).json({result: null, error: result[1]})
-    else res.status(200).json({error: null, result: true})
-}
-
-const timerUpdate = async(req, res) => {
-    if (!req.body.pasta && !req.body.id) {
-        return res.status(200).json({error: 'invalid content', result: null})
-    }
-    result = await db.updateTimerById(req.body.id, req.body.pasta)
-    if (result[0]) res.status(200).json({result: null, error: result[1]})
-    else res.status(200).json({error: null, result: true})
-}
-
-const timerGetPeriod = async(req, res) => {
-    const login = req.user.user_id
-    if (!login) {
-        return res.status(200).json({error: 'invalid content', result: null})
-    }
-
-    result = await db.getPeriodForUser(login)
-    res.status(200).json({error: null, result: result})
-}
-
-
-
 module.exports = {
     register,
-    login,
+    authByPassword,
     verifyToken,
     newPaste,
     pasteList,
     updatePaste,
     deletePaste,
     sendpaste,
-    timerAdd,
-    timerUpdate,
-    timerDelete,
-    timerList,
-    timerGetPeriod
 };

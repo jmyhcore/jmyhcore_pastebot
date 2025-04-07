@@ -1,12 +1,5 @@
-config = {
-    pasta : {
-        trigger: ['!паста', '!pasta', '!капча'],
-        cooldown: 30000
-    },
-    archive: {
-        trigger: ['!archive'],
-        cooldown: 0
-    }
-}
+const fs = require('fs')
+const conf = fs.readFileSync('./conf.json')
 
-module.exports = config
+
+module.exports = JSON.parse(conf)

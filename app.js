@@ -2,10 +2,7 @@ const tmi = require('tmi.js')
 const handlers = require('./src/handlers')
 const webhandlers = require('./src/webhandlers')
 const Timer = require('./src/timers')
-
-const fs = require('fs')
-const rawLoginData = fs.readFileSync('./cridentials.json')
-const parsedLoginData = JSON.parse(rawLoginData)
+const conf = require('./src/config')
 
 const express = require('express')
 const app = express()
@@ -16,12 +13,10 @@ app.use(express.json())
 
 const clientOptions = {
     identity: {
-        username: parsedLoginData.login,
-        password: parsedLoginData.token
+        username: conf.username,
+        password: conf.token
     },
-    channels: [
-        'cptlenivka', 'jmyhcore', 'xelagray' 
-    ]
+    channels: conf.channels
 }
 
 const client = new tmi.client(clientOptions)
@@ -35,33 +30,20 @@ client.on('message', async(channel, context, message, self) => {
     
     if (reply) client.say(channel, reply)
 })
-client.on('connected', handlers.connectionHandler)
 
+client.on('connected', handlers.tmiConnectionHandler)
 client.connect();
 
+
 app.post('/register', webhandlers.register)
-app.post('/login', webhandlers.login)
-app.post('/authtest', webhandlers.verifyToken, (req, res) => {
-    res.status(200).send('wellCUM')
-})
-app.post('/newpaste', webhandlers.verifyToken, webhandlers.newPaste)
-app.post('/pastelist', webhandlers.verifyToken, webhandlers.pasteList)
-app.post('/delete', webhandlers.verifyToken, webhandlers.deletePaste)
-app.post('/update', webhandlers.verifyToken, webhandlers.updatePaste)
-app.post('/sendpaste', webhandlers.verifyToken, (req, res) => webhandlers.sendpaste(req, res, client))
+app.post('/authorize', webhandlers.authByPassword)
+
+app.post('/paste/channellist', webhandlers.verifyToken, (req, res) => {res.json(conf.channels)})
+app.post('/paste/new', webhandlers.verifyToken, webhandlers.newPaste)
+app.post('/paste/list', webhandlers.verifyToken, webhandlers.pasteList)
+app.post('/paste/delete', webhandlers.verifyToken, webhandlers.deletePaste)
+app.post('/paste/update', webhandlers.verifyToken, webhandlers.updatePaste)
+app.post('/paste/send', webhandlers.verifyToken, (req, res) => webhandlers.sendpaste(req, res, client))
 app.get('/', (req, res) => res.sendFile(__dirname+'/front/index.html'))
 
-
-app.get('/timer', (req, res) => res.sendFile(__dirname+'/front/timer.html'))
-app.post('/timerAdd', webhandlers.verifyToken, webhandlers.timerAdd)
-app.post('/timerUpdate', webhandlers.verifyToken, webhandlers.timerUpdate)
-app.post('/timerDelete', webhandlers.verifyToken, webhandlers.timerDelete)
-app.post('/timerList', webhandlers.verifyToken, webhandlers.timerList)
-app.post('/timerGetPeriod', webhandlers.verifyToken, webhandlers.timerGetPeriod)
-
-app.get('/mdi', (req, res) => res.sendFile(__dirname+'/front/mdi.html'))
-
-app.post('/timerUpdate', webhandlers.verifyToken, (req, res) => {
-
-})
 app.listen(80)

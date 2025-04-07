@@ -4,7 +4,7 @@ class DB {
     constructor(dbFilePath = __dirname + "/../sqlite.db") {
         this.connectionState = false;
         this.db = new sqlite3.Database(dbFilePath, (err) => {
-            if (err) console.log(err);
+            if (err) console.error(err);
             this.connectionState = true;
         });
     }
@@ -87,22 +87,22 @@ class DB {
         })
     }
 
-    findUserByLogin = async(login) => {
+    findUserByUsername = async(username) => {
         return new Promise(async(resolve) => {
-            let sql = `select * from user where login = (?)`
-            this.db.all(sql, login, (err, data) => {
+            let sql = `select * from user where username = (?)`
+            this.db.all(sql, username, (err, data) => {
                 if (err) resolve(null)
                 else resolve(data[0])
             })
         })
     }
 
-    createUser = async(login, hashedPwd) => {
+    createUser = async(username, hashedPwd) => {
         return new Promise(async(resolve) => {
-            let sql = `insert into user(login, password) values((?), (?))`
-            this.db.run(sql, [login, hashedPwd], err => {
+            let sql = `insert into user(username, password) values((?), (?))`
+            this.db.run(sql, [username, hashedPwd], err => {
                 if (err) resolve(err)
-                else resolve({login})
+                else resolve({username})
             })
         })
     }
@@ -168,7 +168,6 @@ class DB {
     }
 
     updateTimerById = async(id, newtext) => {
-        console.log(id, newtext)
         return new Promise(async(resolve) => {
             let sql = `update timers set pasta = (?) where id = (?)`
             this.db.run(sql, [newtext, id], err => {
@@ -188,10 +187,10 @@ class DB {
         })
     }
 
-    getPeriodForUser = async(login) => {
+    getPeriodForUser = async(username) => {
         return new Promise( async(resolve) => {
-            let sql = `select pasteinterval from user where login = (?)`
-            this.db.all(sql, login, (err, data) => {
+            let sql = `select pasteinterval from user where username = (?)`
+            this.db.all(sql, username, (err, data) => {
                 if (err) resolve(null)
                 else resolve(data[0])
             })

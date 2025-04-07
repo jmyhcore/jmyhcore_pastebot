@@ -9,19 +9,16 @@ cooldowns = {
 const messageHandler = async (channel, context, message) => {
     return new Promise(async resolve => {
         message = message.split(' ')
-        let command = message[0].toLowerCase()
-
-        message.shift()
+        let command = message.shift().toLowerCase()
         message = message.join(' ')
 
         let result = null
         let error = null
 
-        if (channel != 'xelagray') {
-            if (config.pasta.trigger.indexOf(command) > -1) result = await pasta(context.mod)
-            if (config.archive.trigger.indexOf(command) > -1) result = archive(channel, context, message)
+        if (!config.excludeChannels.indexOf(channel)) {
+            if (config.commands.pasta.trigger.indexOf(command) > -1) result = await pasta(context.mod)
+            if (config.commands.archive.trigger.indexOf(command) > -1) result = archive(channel, context, message)
         }
-
 
         if (!result) result = null
         if (error) resolve('error')
@@ -30,13 +27,13 @@ const messageHandler = async (channel, context, message) => {
 
 }
 
-const connectionHandler = (addr, port) => {
+const tmiConnectionHandler = (addr, port) => {
     console.log(`connected to ${addr}:${port}`)
 }
 
 pasta = async (isModerator) => {
     return new Promise(async (resolve) => {
-        if ((Date.now - cooldowns.pasta) < config.pasta.cooldown && !isModerator) {
+        if ((Date.now - cooldowns.pasta) < config.commands.pasta.cooldown && !isModerator) {
             resolve(null)
             return
         }
@@ -66,5 +63,5 @@ archive = async (channel, context, message, weight = 1000) => {
 
 
 module.exports = {
-    messageHandler, connectionHandler, pasta, archive
+    messageHandler, tmiConnectionHandler, pasta, archive
 }

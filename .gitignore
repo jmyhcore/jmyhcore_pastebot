@@ -1,4 +1,4 @@
 node_modules
-cridentials.json
+conf.json
 sqlite.db
 ssl/*

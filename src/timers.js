@@ -31,7 +31,6 @@ class Timer {
 
                 this.channelPastes[channel].interval = setInterval( () => {
                     this.client.say(channel, this.channelPastes[channel].pasteList[this.channelPastes[channel].iterator])
-                    //console.log(channel, ' | ', this.channelPastes[channel].pasteList[this.channelPastes[channel].iterator])
                     this.channelPastes[channel].iterator++
                     if (this.channelPastes[channel].iterator >= (this.channelPastes[channel].pasteList.length))
                         this.channelPastes[channel].iterator = 0
@@ -39,13 +38,6 @@ class Timer {
             }
         })
     }
-
-    reload = async() => {
-        return new Promise( resolve => {
-            reslove(true)
-        })
-    }
-
 }
 
 module.exports = Timer
