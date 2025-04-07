@@ -46,3 +46,8 @@ RestartSec=3
 [Install]
 WantedBy=multi-user.target
 ```
+
+
+# common errors
+`ENOENT: no such file or directory, open ..... conf.json`  
+you either not ran npm start or not created conf.js at project root
