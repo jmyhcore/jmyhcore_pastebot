@@ -1,5 +1,6 @@
 # installation
 ```shell
+$ npm install
 $ npm run init
 $ node app
 ```
