@@ -11,8 +11,6 @@ try {
     fs.writeFileSync('./conf.json', '')
 }
 
-
-
 if (!config.username) {
     changesWereMadeFlag = true
     config.username = 'your bot username here'

@@ -51,3 +51,7 @@ WantedBy=multi-user.target
 # common errors
 `ENOENT: no such file or directory, open ..... conf.json`  
 you either not ran npm start or not created conf.js at project root
+
+`systemd cofigured, but server does not work`  
+run `systemctl daemon-reload`, then `systemctl enable ${servicename}`, then `systemctl start ${servicename}`
+
